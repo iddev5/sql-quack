@@ -1,14 +1,14 @@
 import type { NextRequest } from 'next/server'
 import Database from "better-sqlite3";
 
-async function executeSqlite(query: string) {
+async function executeSqlite(schema: string, query: string) {
   const db = new Database(":memory:");
 
   try {
     db.pragma("trusted_schema = OFF");
 
-    db.exec(query);
-    const stmt = db.prepare('select * from users');
+    db.exec(schema);
+    const stmt = db.prepare(query);
     const rows = stmt.all().slice(0, 500);
     const columns = rows.length > 0 ? Object.keys(rows[0]) : [];
 
@@ -29,9 +29,9 @@ async function executeSqlite(query: string) {
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { sql, query } = body as { sql: string; query: string };
+  const { sql, schema, query } = body as { sql: string; query: string };
 
-  const result = await executeSqlite(query);
+  const result = await executeSqlite(schema, query);
 
   return Response.json(result)
 }

@@ -5,10 +5,17 @@ import CodeMirror from '@uiw/react-codemirror';
 import { sql } from '@codemirror/lang-sql';
 
 export default function Home() {
-  const [value, setValue] = useState("SELECT 1");
-  const onChange = useCallback((val, viewUpdate) => {
-    console.log('val:', val);
-    setValue(val);
+  const [schema, setSchema] = useState("SELECT 1");
+  const [query, setQuery] = useState("SELECT 1");
+
+  const [result, setResult] = useState(null);
+
+  const onSchemaChange = useCallback((val, viewUpdate) => {
+    setSchema(val);
+  }, []);
+
+  const onQueryChange = useCallback((val, viewUpdate) => {
+    setQuery(val);
   }, []);
 
   const runQuery = async () => {
@@ -16,11 +23,12 @@ export default function Home() {
       const res = await fetch('/api/execute', {
         method: 'POST',
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sql: 'sqlite', query: value })
+        body: JSON.stringify({ sql: 'sqlite', schema: schema, query: query })
       });
 
       const data = await res.json();
-      console.log(data);
+      // console.log(data);
+      setResult(data);
     } catch (err) {
       console.error(err.message);
     }
@@ -30,21 +38,46 @@ export default function Home() {
     <div>
       <div className="h-[5vh] bg-gray-100">
       </div>
-      <CodeMirror value={value} height="55vh" extensions={[sql()]} onChange={onChange} />
+      <div className="flex w-full">
+        <CodeMirror value={schema} className="w-full" height="55vh" extensions={[sql()]} onChange={onSchemaChange} />
+        <CodeMirror value={query} className="w-full" height="55vh" extensions={[sql()]} onChange={onQueryChange} />
+      </div>
       <div className="w-full h-[30vh] border-4 border-gray-200">
-        {/* <table>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Contact</th>
-          </tr>
+        {result &&
+          <table>
+            <thead>
+              <tr className="border-b-1 border-gray-900">
+                {result.columns.map(col => (
+                  <th key={col} className="px-3 py-4 text-left text-sm">
+                    {col.toUpperCase()}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {result.rows.map((row, i) => (
+                <tr key={i} className="border-b-1 border-gray-900">
+                  {result.columns.map(col => (
+                    <td key={col}
+                      className={`px-2 py-4
+                          ${
+                            typeof row[col] === "number" ? "text-indigo-400"
+                            : "text-gray-600"
+                          }
 
-            <tr>
-              <td>ID</td>
-              <td>Name</td>
-              <td>Contact</td>
-            </tr>
-        </table> */}
+                          ${
+                            row[col] === null ? "italic" : "not-italic"
+                          }
+                        `}
+                      >
+                      {row[col] === null ? "NULL" : String(row[col])}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        }
       </div>
       <div className="flex justify-end items-center h-[10vh] p-4">
         <button className="bg-blue-400 hover:bg-blue-300 py-2 px-4 rounded-lg text-md" onClick={runQuery}>Run Query</button>
