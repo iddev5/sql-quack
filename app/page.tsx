@@ -83,7 +83,17 @@ export default function Home() {
       });
 
       const data = await res.json();
-      setHistory([...history, { schema: schema, query: query, timestamp: new Date() }]);
+      {
+        const last = history[0] ?? { schema: '', query: '' };
+        const entry = {
+          schema: schema === last.schema ? null : schema,
+          query: query === last.query ? null : query,
+          timestamp: new Date()
+        };
+
+        const entries = [...history, entry];
+        setHistory(entries.toSorted((a, b) => b.timestamp - a.timestamp));
+      }
 
       if (data.error !== undefined)
         console.error(data.error);
@@ -113,9 +123,10 @@ export default function Home() {
               <select id="history" name="history" onChange={onSchemaHistory}>
                 {
                   history !== [] && history.map((h, idx) =>
-                    <option value={idx}>
-                        Schema #{idx+1} - {formatTimeAgo(h.timestamp)}
-                    </option>
+                    h.schema !== null &&
+                      <option key={idx} value={idx}>
+                          Schema #{idx+1} - {formatTimeAgo(h.timestamp)}
+                      </option>
                   )
                 }
               </select>
@@ -130,9 +141,10 @@ export default function Home() {
             <select id="history" name="history" onChange={onQueryHistory}>
               {
                 history !== [] && history.map((h, idx) =>
-                  <option value={idx}>
-                    Query #{idx+1} - {formatTimeAgo(h.timestamp)}
-                  </option>
+                  h.query !== null &&
+                    <option key={idx} value={idx}>
+                      Query #{idx+1} - {formatTimeAgo(h.timestamp)}
+                    </option>
                 )
               }
             </select>
