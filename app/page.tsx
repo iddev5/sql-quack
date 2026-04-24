@@ -40,8 +40,8 @@ export default function Home() {
       <div className="h-[5vh] bg-gray-100">
       </div>
       <div className="flex w-full">
-        <CodeMirror value={schema} className="w-full" height="55vh" extensions={[sql()]} onChange={onSchemaChange} />
-        <CodeMirror value={query} className="w-full" height="55vh" extensions={[sql()]} onChange={onQueryChange} />
+        <CodeMirror value={schema} className="w-[50%]" height="55vh" extensions={[sql()]} onChange={onSchemaChange} />
+        <CodeMirror value={query} className="w-[50%]" height="55vh" extensions={[sql()]} onChange={onQueryChange} />
       </div>
       <div className="flex justify-end items-center h-[10vh] p-4">
         <button className="bg-blue-400 hover:bg-blue-300 py-2 px-4 rounded-lg text-md" onClick={runQuery}>Run Query</button>
