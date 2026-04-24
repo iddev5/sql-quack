@@ -5,8 +5,8 @@ import CodeMirror from '@uiw/react-codemirror';
 import { sql } from '@codemirror/lang-sql';
 
 export default function Home() {
-  const [schema, setSchema] = useState("SELECT 1");
-  const [query, setQuery] = useState("SELECT 1");
+  const [schema, setSchema] = useState("CREATE TABLE table_name (x INT);\n\nINSERT INTO table_name VALUES (1), (2);");
+  const [query, setQuery] = useState("SELECT * FROM table_name");
 
   const [result, setResult] = useState(null);
 
