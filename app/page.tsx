@@ -27,6 +27,8 @@ export default function Home() {
       });
 
       const data = await res.json();
+      if (data.error !== undefined)
+        console.error(data.error);
       setResult(data);
     } catch (err) {
       console.error(err.message);
@@ -45,7 +47,10 @@ export default function Home() {
         <button className="bg-blue-400 hover:bg-blue-300 py-2 px-4 rounded-lg text-md" onClick={runQuery}>Run Query</button>
       </div>
       <div className="w-full h-[30vh] overflow-auto border-4 border-gray-200">
-        {result !== null &&
+        {result && result.error !== undefined &&
+          <p className="text-red-500">{result.error}</p>
+        }
+        {result && result.error === undefined &&
           <table>
             <thead>
               <tr className="border-b-1 border-gray-900">
