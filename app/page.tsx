@@ -3,6 +3,7 @@ import { useState, useCallback } from "react";
 
 import CodeMirror from '@uiw/react-codemirror';
 import { sql } from '@codemirror/lang-sql';
+import { tokyoNight } from "@uiw/codemirror-theme-tokyo-night";
 
 const default_schemas = {
   'schema-blank': '-- enter code here',
@@ -105,22 +106,33 @@ export default function Home() {
 
   return (
     <div>
-      <div className="h-[5vh] bg-gray-100">
-      </div>
-      <div className="flex w-full">
-        <div className="w-[50%]" >
-          <div className="flex justify-between">
-            <div>
-              <label htmlFor="schema">Schema Preset</label>
-              <select id="schema" name="schema" onChange={onSchemaSelect}>
+      {/* <div className="h-[5vh] bg-gray-100">
+      </div> */}
+      <header className="bg-primary text-white text-[14px] h-[56px] flex items-center justify-between p-4 border-b border-[#30363D]">
+        <div>
+          <p className="text-xl font-bold text-white">SequelPrep</p>
+        </div>
+        <div>
+          {/* TODO */}
+          {/* <button className="px-3 py-1.5">
+            Download
+          </button> */}
+        </div>
+      </header>
+      <div className="flex w-full border-b border-[#30363D]">
+        <div className="w-[50%] border-r border-[#30363D]" >
+          <div className="flex justify-between h-10 items-center px-4 border-b border-[#30363D] bg-[#181c22]">
+            <div className="flex items-center gap-4">
+              <p className="uppercase text-outline font-inter text-[11px] text-[#948ea1]">Database Schema</p>
+              <select className="bg-[#161B22] text-white outline-none border border-[#30363D] text-xs px-2 py-1 rounded appearance-none" id="schema" name="schema" onChange={onSchemaSelect}>
                 <option value="schema-blank">Blank</option>
                 <option value="schema-users">Users</option>
               </select>
             </div>
 
             <div>
-              <label htmlFor="history">History</label>
-              <select id="history" name="history" onChange={onSchemaHistory}>
+              <p className="text-[#948ea1] text-[12px]">Browse History</p>
+              {/* <select id="history" name="history" onChange={onSchemaHistory}>
                 {
                   history !== [] && history.map((h, idx) =>
                     h.schema !== null &&
@@ -129,16 +141,18 @@ export default function Home() {
                       </option>
                   )
                 }
-              </select>
+              </select> */}
             </div>
           </div>
 
-          <CodeMirror value={schema} height="55vh" extensions={[sql()]} onChange={onSchemaChange} />
+          <CodeMirror value={schema} theme={tokyoNight}  height="55vh" extensions={[sql()]} onChange={onSchemaChange} />
         </div>
-        <div className="w-[50%]">
-          <div className="flex justify-end">
-            <label htmlFor="history">History</label>
-            <select id="history" name="history" onChange={onQueryHistory}>
+        <div className="w-[50%] relative">
+          <div className="flex justify-between h-10 items-center px-4 border-b border-[#30363D] bg-[#181c22]">
+            <p className="uppercase text-outline font-inter text-[11px] text-[#948ea1]">Sql query</p>
+            <p className="text-[#948ea1] text-[12px]">Browse History</p>
+
+            {/* <select id="history" name="history" onChange={onQueryHistory}>
               {
                 history !== [] && history.map((h, idx) =>
                   h.query !== null &&
@@ -147,35 +161,38 @@ export default function Home() {
                     </option>
                 )
               }
-            </select>
+            </select> */}
           </div>
-          <CodeMirror value={query}  height="55vh" extensions={[sql()]} onChange={onQueryChange} />
+          <CodeMirror value={query} theme={tokyoNight}  height="55vh" extensions={[sql()]} onChange={onQueryChange} />
+          <button onClick={runQuery} className="absolute bottom-6 right-6 uppercase px-6 py-3 bg-[#7C4DFF] text-white rounded shadow-2xl hover:scale-[1.02] active:scale-95 transition-all font-bold">
+            Run Query
+          </button>
         </div>
       </div>
-      <div className="flex justify-end items-center h-[7vh] p-4">
-        <button className="bg-blue-400 hover:bg-blue-300 py-2 px-4 rounded-lg text-md" onClick={runQuery}>Run Query</button>
-      </div>
-      <div className="w-full h-[30vh] overflow-auto border-4 border-gray-200">
+      <div className="w-full h-[35vh] overflow-auto bg-primary">
+        <div className="h-10 flex items-center justify-between px-4 border-b border-[#30363D] bg-[#181c22]">
+          <p className="uppercase text-outline font-inter text-[11px] text-[#948ea1]">Results</p>
+        </div>
         {result && result.error !== undefined &&
           <p className="text-red-500">{result.error}</p>
         }
         {result && result.error === undefined &&
-          <table>
+          <table className="w-full text-left font-inter text-[13px]">
             <thead>
-              <tr className="border-b-1 border-gray-900">
+              <tr>
                 {result.columns.map(col => (
-                  <th key={col} className="px-3 py-4 text-left text-sm sticky top-0 bg-white">
+                  <th key={col} className="bg-[#262a31] text-left text-sm sticky top-0 p-3 border-b border-[#30363D] border-r border-[#21262D] text-[#cac3d8] text-[11px]">
                     {col.toUpperCase()}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-[#21262D]">
               {result.rows.map((row, i) => (
-                <tr key={i} className="border-b-1 border-gray-900">
+                <tr key={i} className="bg-[#10141a] hover:bg-[#161B22] transition-colors">
                   {result.columns.map(col => (
                     <td key={col}
-                      className={`px-2 py-4
+                      className={`p-3 border-r border-[#21262D]
                           ${
                             typeof row[col] === "number" ? "text-indigo-400"
                             : "text-gray-600"
