@@ -27,7 +27,6 @@ export default function Home() {
       });
 
       const data = await res.json();
-      // console.log(data);
       setResult(data);
     } catch (err) {
       console.error(err.message);
@@ -42,13 +41,16 @@ export default function Home() {
         <CodeMirror value={schema} className="w-full" height="55vh" extensions={[sql()]} onChange={onSchemaChange} />
         <CodeMirror value={query} className="w-full" height="55vh" extensions={[sql()]} onChange={onQueryChange} />
       </div>
-      <div className="w-full h-[30vh] border-4 border-gray-200">
-        {result &&
+      <div className="flex justify-end items-center h-[10vh] p-4">
+        <button className="bg-blue-400 hover:bg-blue-300 py-2 px-4 rounded-lg text-md" onClick={runQuery}>Run Query</button>
+      </div>
+      <div className="w-full h-[30vh] overflow-auto border-4 border-gray-200">
+        {result !== null &&
           <table>
             <thead>
               <tr className="border-b-1 border-gray-900">
                 {result.columns.map(col => (
-                  <th key={col} className="px-3 py-4 text-left text-sm">
+                  <th key={col} className="px-3 py-4 text-left text-sm sticky top-0 bg-white">
                     {col.toUpperCase()}
                   </th>
                 ))}
@@ -78,9 +80,6 @@ export default function Home() {
             </tbody>
           </table>
         }
-      </div>
-      <div className="flex justify-end items-center h-[10vh] p-4">
-        <button className="bg-blue-400 hover:bg-blue-300 py-2 px-4 rounded-lg text-md" onClick={runQuery}>Run Query</button>
       </div>
     </div>
   );
