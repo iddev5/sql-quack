@@ -4,11 +4,34 @@ import { useState, useCallback } from "react";
 import CodeMirror from '@uiw/react-codemirror';
 import { sql } from '@codemirror/lang-sql';
 
+const default_schemas = {
+  'schema-blank': '-- enter code here',
+
+  'schema-users': `
+CREATE TABLE users (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  age INTEGER
+);
+
+INSERT INTO users VALUES
+  (1, 'Alice Johnson', 'alice@example.com', 28),
+  (2, 'Bob Smith',    'bob@example.com',   34),
+  (3, 'Carol White',  'carol@example.com', 25);
+  `,
+};
+
 export default function Home() {
   const [schema, setSchema] = useState("CREATE TABLE table_name (x INT);\n\nINSERT INTO table_name VALUES (1), (2);");
   const [query, setQuery] = useState("SELECT * FROM table_name");
 
   const [result, setResult] = useState(null);
+
+  const onSchemaSelect = (e) => {
+    const schema_name = e.target.value;
+    setSchema(default_schemas[schema_name].trim() ?? '')
+  };
 
   const onSchemaChange = useCallback((val, viewUpdate) => {
     setSchema(val);
@@ -40,10 +63,20 @@ export default function Home() {
       <div className="h-[5vh] bg-gray-100">
       </div>
       <div className="flex w-full">
-        <CodeMirror value={schema} className="w-[50%]" height="55vh" extensions={[sql()]} onChange={onSchemaChange} />
-        <CodeMirror value={query} className="w-[50%]" height="55vh" extensions={[sql()]} onChange={onQueryChange} />
+        <div className="w-[50%]" >
+          <label htmlFor="schema">Schema Preset</label>
+          <select id="schema" name="schema" onChange={onSchemaSelect}>
+            <option value="schema-blank">Blank</option>
+            <option value="schema-users">Users</option>
+          </select>
+          <CodeMirror value={schema} height="55vh" extensions={[sql()]} onChange={onSchemaChange} />
+        </div>
+        <div className="w-[50%]">
+          <p>&nbsp;</p>
+          <CodeMirror value={query}  height="55vh" extensions={[sql()]} onChange={onQueryChange} />
+        </div>
       </div>
-      <div className="flex justify-end items-center h-[10vh] p-4">
+      <div className="flex justify-end items-center h-[7vh] p-4">
         <button className="bg-blue-400 hover:bg-blue-300 py-2 px-4 rounded-lg text-md" onClick={runQuery}>Run Query</button>
       </div>
       <div className="w-full h-[30vh] overflow-auto border-4 border-gray-200">
