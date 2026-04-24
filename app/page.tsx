@@ -28,10 +28,22 @@ export default function Home() {
 
   const [result, setResult] = useState(null);
 
+  const [history, setHistory] = useState([]);
+
   const onSchemaSelect = (e) => {
     const schema_name = e.target.value;
     setSchema(default_schemas[schema_name].trim() ?? '')
   };
+
+  const onSchemaHistory = (e) => {
+    const schema_idx = e.target.value;
+    setSchema(history[schema_idx].schema);
+  }
+
+  const onQueryHistory = (e) => {
+    const query_idx = e.target.value;
+    setQuery(history[query_idx].query);
+  }
 
   const onSchemaChange = useCallback((val, viewUpdate) => {
     setSchema(val);
@@ -50,6 +62,8 @@ export default function Home() {
       });
 
       const data = await res.json();
+      setHistory([...history, { schema: schema, query: query, timestamp: new Date() }]);
+
       if (data.error !== undefined)
         console.error(data.error);
       setResult(data);
@@ -64,15 +78,40 @@ export default function Home() {
       </div>
       <div className="flex w-full">
         <div className="w-[50%]" >
-          <label htmlFor="schema">Schema Preset</label>
-          <select id="schema" name="schema" onChange={onSchemaSelect}>
-            <option value="schema-blank">Blank</option>
-            <option value="schema-users">Users</option>
-          </select>
+          <div className="flex justify-between">
+            <div>
+              <label htmlFor="schema">Schema Preset</label>
+              <select id="schema" name="schema" onChange={onSchemaSelect}>
+                <option value="schema-blank">Blank</option>
+                <option value="schema-users">Users</option>
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="history">History</label>
+              <select id="history" name="history" onChange={onSchemaHistory}>
+                {
+                  history !== [] && history.map((h, idx) =>
+                    <option value={idx}>Schema #{idx+1}</option>
+                  )
+                }
+              </select>
+            </div>
+          </div>
+
           <CodeMirror value={schema} height="55vh" extensions={[sql()]} onChange={onSchemaChange} />
         </div>
         <div className="w-[50%]">
-          <p>&nbsp;</p>
+          <div className="flex justify-end">
+            <label htmlFor="history">History</label>
+            <select id="history" name="history" onChange={onQueryHistory}>
+              {
+                history !== [] && history.map((h, idx) =>
+                  <option value={idx}>Query #{idx+1}</option>
+                )
+              }
+            </select>
+          </div>
           <CodeMirror value={query}  height="55vh" extensions={[sql()]} onChange={onQueryChange} />
         </div>
       </div>
