@@ -22,6 +22,27 @@ INSERT INTO users VALUES
   `,
 };
 
+function formatTimeAgo(dateInput) {
+  const date = new Date(dateInput);
+  const now = new Date();
+
+  const diffMs = now - date;
+  const diffSec = Math.floor(diffMs / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+  const diffHour = Math.floor(diffMin / 60);
+
+  if (diffSec < 60)
+    return `${diffSec} seconds ago`;
+
+  if (diffMin < 60)
+    return `${diffMin} minute${diffMin > 1 ? "s" : ""} ago`;
+
+  if (diffHour < 24)
+    return `${diffHour} hour${diffHour > 1 ? "s" : ""} ago`;
+
+  return date.toLocaleString();
+}
+
 export default function Home() {
   const [schema, setSchema] = useState("CREATE TABLE table_name (x INT);\n\nINSERT INTO table_name VALUES (1), (2);");
   const [query, setQuery] = useState("SELECT * FROM table_name");
@@ -92,7 +113,9 @@ export default function Home() {
               <select id="history" name="history" onChange={onSchemaHistory}>
                 {
                   history !== [] && history.map((h, idx) =>
-                    <option value={idx}>Schema #{idx+1}</option>
+                    <option value={idx}>
+                        Schema #{idx+1} - {formatTimeAgo(h.timestamp)}
+                    </option>
                   )
                 }
               </select>
@@ -107,7 +130,9 @@ export default function Home() {
             <select id="history" name="history" onChange={onQueryHistory}>
               {
                 history !== [] && history.map((h, idx) =>
-                  <option value={idx}>Query #{idx+1}</option>
+                  <option value={idx}>
+                    Query #{idx+1} - {formatTimeAgo(h.timestamp)}
+                  </option>
                 )
               }
             </select>
