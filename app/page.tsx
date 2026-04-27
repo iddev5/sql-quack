@@ -179,10 +179,14 @@ export default function Home() {
       </div>
       <div className="w-full h-[35vh] overflow-auto bg-primary">
         <div className="h-10 flex items-center justify-between px-4 border-b border-[#30363D] bg-[#181c22]">
-          <p className="uppercase text-outline font-inter text-[11px] text-[#948ea1]">Results</p>
+          <div className="flex gap-4">
+            <p className="uppercase text-outline font-inter text-[11px] text-[#948ea1]">Results</p>
+            {result && result.error === undefined && <p className="font-inter text-[11px] text-[#948ea1]">{result.rows.length} rows returned</p>}
+            <p className="font-inter text-[11px] text-[#948ea1]">Executed in {result.time / 1000} seconds</p>
+          </div>
         </div>
         {result && result.error !== undefined &&
-          <p className="text-red-500">{result.error}</p>
+          <p className="text-red-400 p-2">{result.error}</p>
         }
         {result && result.error === undefined &&
           <table className="w-full text-left font-inter text-[13px]">
