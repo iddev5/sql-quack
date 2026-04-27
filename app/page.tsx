@@ -1,5 +1,6 @@
 "use client";
 import { useState, useCallback } from "react";
+import { Play, History } from "lucide-react";
 
 import CodeMirror from '@uiw/react-codemirror';
 import { sql } from '@codemirror/lang-sql';
@@ -131,7 +132,10 @@ export default function Home() {
             </div>
 
             <div>
-              <p className="text-[#948ea1] text-[12px]">Browse History</p>
+              <p className="flex items-center gap-1 text-[#948ea1] text-[12px]">
+                <History size={12} />
+                Browse History
+              </p>
               {/* <select id="history" name="history" onChange={onSchemaHistory}>
                 {
                   history !== [] && history.map((h, idx) =>
@@ -150,7 +154,10 @@ export default function Home() {
         <div className="w-[50%] relative">
           <div className="flex justify-between h-10 items-center px-4 border-b border-[#30363D] bg-[#181c22]">
             <p className="uppercase text-outline font-inter text-[11px] text-[#948ea1]">Sql query</p>
-            <p className="text-[#948ea1] text-[12px]">Browse History</p>
+            <p className="flex items-center gap-1  text-[#948ea1] text-[12px]">
+              <History size={12} />
+              Browse History
+            </p>
 
             {/* <select id="history" name="history" onChange={onQueryHistory}>
               {
@@ -164,7 +171,8 @@ export default function Home() {
             </select> */}
           </div>
           <CodeMirror value={query} theme={tokyoNight}  height="55vh" extensions={[sql()]} onChange={onQueryChange} />
-          <button onClick={runQuery} className="absolute bottom-6 right-6 uppercase px-6 py-3 bg-[#7C4DFF] text-white rounded shadow-2xl hover:scale-[1.02] active:scale-95 transition-all font-bold">
+          <button onClick={runQuery} className="flex items-center gap-2 absolute bottom-6 right-6 uppercase px-6 py-3 bg-[#7C4DFF] text-white rounded shadow-2xl hover:scale-[1.02] active:scale-95 transition-all font-bold">
+            <Play size={16} fill="white" />
             Run Query
           </button>
         </div>
