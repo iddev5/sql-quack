@@ -1,7 +1,7 @@
 import Navbar from "@/components/navbar";
 
 export default function Dashboard() {
-  return <div className="bg-[#181c22] w-screen h-screen overflow-x-hidden">
+  return <div className="bg-primary w-screen h-screen overflow-x-hidden">
     <Navbar />
     <div className="flex">
       <div className="w-[65%] h-screen bg-primary border-r border-[#30363D]">

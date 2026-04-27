@@ -12,6 +12,9 @@
   --font-mono: var(--font-geist-mono);
 
   --color-primary: #0D1117;
+  --color-secondary: #181c22;
+  --color-sm-headings: #948ea1;
+  --color-line: #30363D;
 }
 
 @media (prefers-color-scheme: dark) {
