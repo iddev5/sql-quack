@@ -1,11 +1,12 @@
 "use client";
 import { useState, useCallback } from "react";
 import { Play, History, Clock, Download } from "lucide-react";
-import { signIn, signOut, useSession, SessionProvider } from "next-auth/react";
 
 import CodeMirror from '@uiw/react-codemirror';
 import { sql } from '@codemirror/lang-sql';
 import { tokyoNight } from "@uiw/codemirror-theme-tokyo-night";
+
+import Navbar from "@/components/navbar";
 
 const default_schemas = {
   'schema-blank': '-- enter code here',
@@ -46,9 +47,7 @@ function formatTimeAgo(dateInput) {
   return date.toLocaleString();
 }
 
-function Home() {
-  const { data: session } = useSession();
-
+export default function Home() {
   const [runRequest, setRunRequest] = useState(false);
   const [schema, setSchema] = useState("CREATE TABLE table_name (x INT);\n\nINSERT INTO table_name VALUES (1), (2);");
   const [query, setQuery] = useState("SELECT * FROM table_name");
@@ -140,26 +139,7 @@ function Home() {
 
   return (
     <div>
-      {/* <div className="h-[5vh] bg-gray-100">
-      </div> */}
-      <header className="bg-primary text-white text-[14px] h-[56px] flex items-center justify-between p-4 border-b border-[#30363D]">
-        <div>
-          <p className="text-xl font-bold text-white">SequelPrep</p>
-        </div>
-        <div className="flex gap-2">
-          {session && <>
-              <p>{session?.user?.email}</p>
-              {'|'}
-              <button onClick={() => signOut()}>
-                Sign Out
-              </button>
-            </>
-          }
-          {!session && <button onClick={() => signIn()}>
-            Sign In
-          </button>}
-        </div>
-      </header>
+      <Navbar />
       <div className="flex w-full border-b border-[#30363D]">
         <div className="w-[50%] border-r border-[#30363D]" >
           <div className="flex justify-between h-10 items-center px-4 border-b border-[#30363D] bg-[#181c22]">
@@ -278,10 +258,4 @@ function Home() {
       </div>
     </div>
   );
-}
-
-export default function App() {
-  return <SessionProvider>
-    <Home />
-  </SessionProvider>;
 }
