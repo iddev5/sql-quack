@@ -1,6 +1,6 @@
 "use client";
 import { useState, useCallback } from "react";
-import { Play, History, Clock } from "lucide-react";
+import { Play, History, Clock, Download } from "lucide-react";
 
 import CodeMirror from '@uiw/react-codemirror';
 import { sql } from '@codemirror/lang-sql';
@@ -110,6 +110,31 @@ export default function Home() {
     }
   }
 
+  const downloadResult = () => {
+    const header = result.columns.join(",");
+    const body = result.rows.map(row =>
+      result.columns.map(col =>
+        `"${String(row[col]).replace(/"/g, '""')}"`
+      ).join(",")
+    );
+
+    const content = [header, ...body].join("\n");
+    const blob = new Blob([content], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+
+    const date = new Date().toISOString();
+    link.download = `sequel-prep-${date}.csv`;
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <div>
       {/* <div className="h-[5vh] bg-gray-100">
@@ -191,6 +216,9 @@ export default function Home() {
               <p className="font-inter text-[11px] text-[#948ea1]">Executed in {result.time / 1000} seconds</p>
             </>}
           </div>
+          {result && result.error === undefined && <button onClick={downloadResult} className="hover:scale-105 hover:bg-white/10 p-1 rounded-lg">
+            <Download size={18} className="text-[#948ea1]" />
+          </button>}
         </div>
         {
           runRequest &&
