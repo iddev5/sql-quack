@@ -132,10 +132,10 @@ export default function Home() {
             </div>
 
             <div>
-              <p className="flex items-center gap-1 text-[#948ea1] text-[12px]">
+              {/* <p className="flex items-center gap-1 text-[#948ea1] text-[12px]">
                 <History size={12} />
                 Browse History
-              </p>
+              </p> */}
               {/* <select id="history" name="history" onChange={onSchemaHistory}>
                 {
                   history !== [] && history.map((h, idx) =>
@@ -154,10 +154,10 @@ export default function Home() {
         <div className="w-[50%] relative">
           <div className="flex justify-between h-10 items-center px-4 border-b border-[#30363D] bg-[#181c22]">
             <p className="uppercase text-outline font-inter text-[11px] text-[#948ea1]">Sql query</p>
-            <p className="flex items-center gap-1  text-[#948ea1] text-[12px]">
+            {/* <p className="flex items-center gap-1  text-[#948ea1] text-[12px]">
               <History size={12} />
               Browse History
-            </p>
+            </p> */}
 
             {/* <select id="history" name="history" onChange={onQueryHistory}>
               {
