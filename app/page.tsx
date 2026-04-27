@@ -1,6 +1,7 @@
 "use client";
 import { useState, useCallback } from "react";
 import { Play, History, Clock, Download } from "lucide-react";
+import { signIn, signOut, useSession, SessionProvider } from "next-auth/react";
 
 import CodeMirror from '@uiw/react-codemirror';
 import { sql } from '@codemirror/lang-sql';
@@ -45,7 +46,9 @@ function formatTimeAgo(dateInput) {
   return date.toLocaleString();
 }
 
-export default function Home() {
+function Home() {
+  const { data: session } = useSession();
+
   const [runRequest, setRunRequest] = useState(false);
   const [schema, setSchema] = useState("CREATE TABLE table_name (x INT);\n\nINSERT INTO table_name VALUES (1), (2);");
   const [query, setQuery] = useState("SELECT * FROM table_name");
@@ -143,11 +146,18 @@ export default function Home() {
         <div>
           <p className="text-xl font-bold text-white">SequelPrep</p>
         </div>
-        <div>
-          {/* TODO */}
-          {/* <button className="px-3 py-1.5">
-            Download
-          </button> */}
+        <div className="flex gap-2">
+          {session && <>
+              <p>{session?.user?.email}</p>
+              {'|'}
+              <button onClick={() => signOut()}>
+                Sign Out
+              </button>
+            </>
+          }
+          {!session && <button onClick={() => signIn()}>
+            Sign In
+          </button>}
         </div>
       </header>
       <div className="flex w-full border-b border-[#30363D]">
@@ -268,4 +278,10 @@ export default function Home() {
       </div>
     </div>
   );
+}
+
+export default function App() {
+  return <SessionProvider>
+    <Home />
+  </SessionProvider>;
 }
