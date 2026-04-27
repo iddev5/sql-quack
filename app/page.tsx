@@ -1,6 +1,6 @@
 "use client";
 import { useState, useCallback } from "react";
-import { Play, History } from "lucide-react";
+import { Play, History, Clock } from "lucide-react";
 
 import CodeMirror from '@uiw/react-codemirror';
 import { sql } from '@codemirror/lang-sql';
@@ -46,6 +46,7 @@ function formatTimeAgo(dateInput) {
 }
 
 export default function Home() {
+  const [runRequest, setRunRequest] = useState(false);
   const [schema, setSchema] = useState("CREATE TABLE table_name (x INT);\n\nINSERT INTO table_name VALUES (1), (2);");
   const [query, setQuery] = useState("SELECT * FROM table_name");
 
@@ -78,6 +79,8 @@ export default function Home() {
 
   const runQuery = async () => {
     try {
+      setRunRequest(true);
+
       const res = await fetch('/api/execute', {
         method: 'POST',
         headers: { "Content-Type": "application/json" },
@@ -102,6 +105,8 @@ export default function Home() {
       setResult(data);
     } catch (err) {
       console.error(err.message);
+    } finally {
+      setRunRequest(false);
     }
   }
 
@@ -171,10 +176,10 @@ export default function Home() {
             </select> */}
           </div>
           <CodeMirror value={query} theme={tokyoNight}  height="55vh" extensions={[sql()]} onChange={onQueryChange} />
-          <button onClick={runQuery} className="flex items-center gap-2 absolute bottom-6 right-6 uppercase px-6 py-3 bg-[#7C4DFF] text-white rounded shadow-2xl hover:scale-[1.02] active:scale-95 transition-all font-bold">
+          {!runRequest && <button onClick={runQuery} className="flex items-center gap-2 absolute bottom-6 right-6 uppercase px-6 py-3 bg-[#7C4DFF] text-white rounded shadow-2xl hover:scale-[1.02] active:scale-95 transition-all font-bold">
             <Play size={16} fill="white" />
             Run Query
-          </button>
+          </button>}
         </div>
       </div>
       <div className="w-full h-[35vh] overflow-auto bg-primary">
@@ -187,10 +192,17 @@ export default function Home() {
             </>}
           </div>
         </div>
-        {result && result.error !== undefined &&
+        {
+          runRequest &&
+            <div className="w-full pt-16 flex items-center justify-center flex-col gap-4">
+              <Clock className="text-[#948ea1]" size={72} />
+              <p className="text-3xl text-[#948ea1]">Execution in progress...</p>
+            </div>
+        }
+        {!runRequest && result && result.error !== undefined &&
           <p className="text-red-400 p-2">{result.error}</p>
         }
-        {result && result.error === undefined &&
+        {!runRequest && result && result.error === undefined &&
           <table className="w-full text-left font-inter text-[13px]">
             <thead>
               <tr>
