@@ -231,7 +231,7 @@ export default function Home() {
                 ))}
               </tr>
             </thead>
-            <tbody class="divide-y divide-[#21262D]">
+            <tbody className="divide-y divide-[#21262D]">
               {result.rows.map((row, i) => (
                 <tr key={i} className="bg-[#10141a] hover:bg-[#161B22] transition-colors">
                   {result.columns.map(col => (
